@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Пример веб-страницы</title>
+    <link rel="stylesheet" href="main.css">
+
+    <!--<script>src = "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" </script>-->
+    <script type="text/javascript" src="jquery-3.4.1.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $(".BFS").click(function () {
+                n = $(".n").val();
+                s = $(".rebra").val();
+                var ar = s.split('\n');
+                g = new Array(Number(n));
+                for (i = 0; i < Number(n); i++) {
+                    g[i] = new Array();
+                }
+                // $(".matr").append(g.length + '\n');
+                for (i = 0; i < ar.length; i++) {
+                    a = Number(ar[i][0]);
+                    b = Number(ar[i][2]);
+                    a = a - 1;
+                    b = b - 1;
+                    g[a].push(b);
+                    g[b].push(a);
+                    //$(".matr").append(a + " " + b + '\n');
+
+                }
+                for (i = 0; i < g.length; i++) {
+                    for (j = 0; j < g[i].length; j++) {
+                        //$(".matr").append(g[i][j] + " ");
+                    }
+                    // $(".matr").append("\n");
+                }
+                used = Array(Number(n) + 1).join(0).split('');
+                used[0] = 1;
+                queue = [];
+                queue.push(0);
+                ver = [];
+                ver.push(0);
+                while (queue.length > 0) {
+                    v = queue.shift();
+                    //$(".matr").append(v + '\n');
+                    for (i = 0; i < g[v].length; i++) {
+                        if (used[g[v][i]] == 0) {
+                            used[g[v][i]] = 1;
+                            queue.push(g[v][i]);
+                            ver.push(g[v][i]);
+                        }
+                    }
+                }
+                for (i = 0; i < ver.length; i++) {
+                    $(".matr").append((ver[i] + 1) + " ");
+                }
+            });
+            //BFS просто так
+            $(".levitan").click(function () {
+
+
+                n = $(".n").val();
+                s = $(".rebra").val();
+                var ar = s.split('\n');
+
+                g = new Array(Number(n));
+                for (i = 0; i < Number(n); i++) {
+                    g[i] = new Array();
+                }
+                for (i = 0; i < ar.length; i++) {
+                    intar = ar[i].split(" ");
+                    //$(".matr").append(intar + "\n");
+                    a = Number(intar[0]);
+                    b = Number(intar[1]);
+                    c = Number(intar[2]);
+                    a = a;
+                    b = b;
+                    //$(".matr").append(a+ " " + b +" " + c +" " + "\n");
+                    g[a].push([b, c]);
+                    //$(".matr").append("fewgre\n");
+                    g[b].push([a, c]);
+
+                }
+                /*for(i=0;i<g.length;i++){
+                    for(j=0;j<g[i].length;j++){
+                       
+                        $(".matr").append(i + " in " + g[i][j][0] + " " + g[i][j][1] + "\n");
+                    }
+                }*/
+                d = new Array();
+                id = new Array();
+                p = new Array();
+                for (i = 0; i < n; i++) {
+                    d.push(100000);
+                    id.push(0);
+                    p.push(-1);
+                }
+                start = Number($(".start").val());
+                d[start] = 0;
+                //$(".matr").append(d.length + "\n");
+                end = Number($(".end").val());;
+
+                q = new Array();
+                q.push(start);
+                //$(".matr").append(q.length + "\n");
+
+                while (q.length != 0) {
+                    // $(".matr").append(q.length + "\n");
+                    v = q.shift();
+
+                    id[v] = 1;
+                    // $(".matr").append(v + "- v \n");
+                    for (i = 0; i < g[v].length; i++) {
+                        to = g[v][i][0];
+                        len = g[v][i][1];
+
+
+                        if (d[to] > d[v] + len) {
+                            d[to] = d[v] + len;
+                            if (id[to] == 0) {
+
+                                q.push(to);
+                            } else if (id[to] == 1) {
+                                q.unshift(to);
+                            }
+
+                            p[to] = v;
+                            //$(".matr").append(to + " " + p[to] +  " - p \n");
+                            id[to] = 1;
+                        }
+                        //$(".matr").append(q.length + "\n");
+                    }
+                }
+
+                /*for(i=0;i<p.length;i++){
+                    $(".matr").append(p[i] + " ");
+                }*/
+                path = new Array();
+                for (i = end; i != start; i = p[i]) {
+                    path.push(i);
+
+                }
+                path.push(start);
+                for (i = path.length - 1; i >= 0; i--) {
+                    $(".matr").append(path[i] + " ");
+                }
+
+            });
+            //levitan
+            $(".Ford-Bellman").click(function () {
+                n = $(".n").val();
+
+
+
+
+                s = $(".rebra").val();
+
+                var ar = s.split('\n');
+                e = new Array();
+                for (i = 0; i < ar.length; i++) {
+                    intar = ar[i].split(" ");
+                    a = Number(intar[0]);
+                    b = Number(intar[1]);
+                    c = Number(intar[2]);
+                    a = a;
+                    b = b;
+
+                    e.push([a, b, c]);
+                    e.push([b, a, c]);
+                }
+                d = new Array();
+                p = new Array();
+                inf = 100000;
+                for (i = 0; i < n; i++) {
+                    d.push(inf);
+                    p.push(-1);
+                }
+                start = Number($(".start").val());
+                d[start] = 0;
+                end = Number($(".end").val());
+                x = 0;
+                for (i = 0; i < n; i++) {
+                    any = 0;
+                    x = -1;
+
+                    for (j = 0; j < e.length; j++) {
+                        //$(".matr").append(d[e[j][0]]+" \n");
+
+                        if (d[e[j][0]] < inf) {
+                            //$(".matr").append(e[j][0] + " " + e[j][1]+ " " + d[e[j][0]] +  " " + e[j][2]  + "\n");
+                            if (d[e[j][1]] > d[e[j][0]] + e[j][2]) {
+                                //$(".matr").append( "herer \n");
+                                d[e[j][1]] = d[e[j][0]] + e[j][2];
+                                p[e[j][1]] = e[j][0];
+                                any = 1;
+                                x = e[j][1];
+                            }
+                        }
+                    }
+                    if (any == 0) {
+                        i = n + 3;
+                    }
+                }
+                //$(".matr").append("ergert\n");
+                if (x == -1) {
+                    if (d[end] == inf) {
+                        $(".matr").append("No path");
+                        return;
+                    }
+                    path = new Array();
+                    for (i = end; i != start; i = p[i]) {
+                        path.push(i);
+
+                    }
+                    path.push(start);
+                    for (i = path.length - 1; i >= 0; i--) {
+                        $(".matr").append(path[i] + " ");
+                    }
+                    $(".matr").append("\n длина: " + d[end] + "\n");
+                } else {
+                    y = x;
+                    $(".matr").append("цикл отрицательного веса  \n");
+                    for (i = 0; i < n; i++) {
+                        y = p[y];
+                    }
+                    col = 0;
+                    for (i = y; ; i = p[i]) {
+                        col++;
+                        $(".matr").append(i + " ");
+                        if (i == y && col > 1) {
+                            return;
+                        }
+                    }
+                }
+            });
+            //Ford-Bellman
+            $(".Dejkstra").click(function () {
+                n = $(".n").val();
+                s = $(".rebra").val();
+                var ar = s.split('\n');
+
+                g = new Array(Number(n));
+                for (i = 0; i < Number(n); i++) {
+                    g[i] = new Array();
+                }
+                for (i = 0; i < ar.length; i++) {
+                    intar = ar[i].split(" ");
+                    a = Number(intar[0]);
+                    b = Number(intar[1]);
+                    c = Number(intar[2]);
+                    a = a;
+                    b = b;
+                    g[a].push([b, c]);
+                    g[b].push([a, c]);
+
+                }
+                inf = 100000;
+                d = new Array();
+                p = new Array();
+                used = new Array();
+                for (i = 0; i < n; i++) {
+                    d.push(inf);
+                    used.push(0);
+                    p.push(-1);
+                }
+                start = Number($(".start").val());
+                d[start] = 0;
+                for (i = 0; i < n; i++) {
+                    v = -1;
+                    for (j = 0; j < n; j++) {
+                        if (used[j] == 0 && (v == -1 || d[j] < d[v])) {
+                            v = j;
+                        }
+                    }
+
+                    used[v] = 1;
+                    for (j = 0; j < g[v].length; j++) {
+                        to = g[v][j][0];
+                        len = g[v][j][1];
+                        if (d[v] + len < d[to]) {
+                            d[to] = d[v] + len;
+                            p[to] = v;
+                        }
+                    }
+                }
+                end = Number($(".end").val());
+                path = new Array();
+                for (i = end; i != start; i = p[i]) {
+                    path.push(i);
+
+                }
+                path.push(start);
+                for (i = path.length - 1; i >= 0; i--) {
+                    $(".matr").append(path[i] + " ");
+                }
+
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <p>введите кол - во вершин<Br>
+        <input type="text" class="n"></p>
+
+    <p>введите матрицу ребер<Br>
+        <textarea cols="10" rows="10" class="rebra"></textarea></p>
+    <p>начальная и конечная вершины<Br>
+        <input class="start" value=0>
+        <input class="end">
+        <Br>
+        <button class="BFS">выполнить bfs</button>
+        <button class="levitan">выполнить алгоритм левитана</button>
+        <button class="Ford-Bellman">выполнить алгоритм Форда Беллмана</button>
+        <button class="Dejkstra">выполнить алгоритм Дейкстры</button>
+        <p>порядок обхода начиная со стартовой вершины<Br>
+            <textarea name="matr" id="1" cols="30" rows="10" class="matr"></textarea>
+
+
+
+</body>
